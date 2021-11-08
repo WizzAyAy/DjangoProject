@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paper List</title>
+</head>
+<body>
+    <form action="/paper/view" method="post">
+        {% csrf_token %}
+        <label for="paper-select">Choose a paper:</label>
+            <select name="paper" id="paper-select">
+                {% for paper in paper_list %}
+                    <option value={{ paper.get_id }}>{{ paper.get_title }}</option>
+                {% endfor %}
+            </select>
+        <input type="submit" value="Go" />
+    </form>
+</body>
+</html>

@@ -10,3 +10,6 @@ class Paper(models.Model):
 
     def get_year(self):
         return self.paper_year
+
+    def get_id(self):
+        return self.id
