@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+import sys
 
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
@@ -13,7 +13,6 @@ def index(request):
 
 
 def view(request):
-    paper_id = RequestContext(request, 'paper')
-    paper = get_object_or_404(Paper, pk=paper_id)
+    paper = get_object_or_404(Paper, pk=request.POST.get('paper'))
     context = {'paper': paper}
     return render(request, 'paper.html', context)

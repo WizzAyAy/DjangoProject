@@ -5,7 +5,7 @@
     <title>Paper List</title>
 </head>
 <body>
-    <form action="/paper/view" method="post">
+    <form action="{% url 'paper:view' %}"  method="post">
         {% csrf_token %}
         <label for="paper-select">Choose a paper:</label>
             <select name="paper" id="paper-select">
