@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}DjangoWebSite{% endblock %}</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+</head>
+<body>
+    {% block sidebar %}
+    <ul class="nav justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/paper/list">list</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/information/getPaper">Generate new paper</a>
+      </li>
+    </ul>
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+</body>
+</html>
