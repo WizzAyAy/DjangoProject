@@ -14,7 +14,7 @@ def view(request):
     context = {
         'date': response.text
     }
-    return render(request, 'paperInformation.html', context)
+    return render(request, '../templates/paperInformation.html', context)
 
 
 def get_paper(request):
@@ -35,4 +35,4 @@ def get_paper(request):
                 paper_year=response['result'][paper_id]['pubdate']
             )
 
-    return render(request, 'paperInformation.html', context)
+    return render(request, '../templates/paperInformation.html', context)
