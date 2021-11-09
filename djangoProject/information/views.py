@@ -10,13 +10,6 @@ logger = logging.getLogger('project.interesting.stuff')
 def view(request):
     paper_id = 22368089
     response = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' + str(paper_id))
-    # uuid = response.json()
-    # date = response.json['result'][uuid]['pubdate']
-    # title = response.json['result'][uuid]['title']
-    # context = {
-    #     'date': date,
-    #     'title': title
-    # }
     logger.error(response.text)
     context = {
         'date': response.text

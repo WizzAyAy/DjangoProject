@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 </head>
 <body>
-        <p>{{ title }}</p>
-        <p>{{ date }}</p>
+    <ul class="list-group">
+      <li class="list-group-item">Title : {{ title }}</li>
+      <li class="list-group-item">Date : {{ date }}</li>
+    </ul>
 </body>
 </html>
