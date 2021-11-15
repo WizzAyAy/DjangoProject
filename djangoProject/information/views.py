@@ -1,6 +1,7 @@
 import logging
 import requests
 from django.shortcuts import render
+from lxml import etree
 
 from paper.models import Paper
 
@@ -8,11 +9,14 @@ logger = logging.getLogger('project.interesting.stuff')
 
 
 def view(request):
-    paper_id = 22368089
-    response = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=' + str(paper_id))
-    logger.error(response.text)
+    paper_id = 8562159
+    # https: // eutils.ncbi.nlm.nih.gov / entrez / eutils / efetch.fcgi?db = pmc & id = 8562159
+    response = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' + str(paper_id))
+    tree = etree.fromstring(response.text)
+
+    logger.error(tree.tag)
     context = {
-        'date': response.text
+        'date': tree
     }
     return render(request, '../templates/paperInformation.html', context)
 
