@@ -43,7 +43,9 @@ def get_paper_from_api(request):
             tree = etree.fromstring(response_text.text)
             xmlstr = ""
             for elem in list(tree.iter('body')):
-                xmlstr = etree.tostring(elem, encoding='utf8', method='xml')
+                xmlstr = etree.tostring(elem, encoding='utf8', method='text')
+            xmlstr = str(xmlstr)
+            xmlstr = xmlstr.replace('\\n', '')
 
             Paper.objects.create(
                 id=paper_id,
