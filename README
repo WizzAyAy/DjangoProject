@@ -1,1 +1,8 @@
-Hello
+# INSTAL TOUTES LES LIBRAIRIES
+pip install -r requirements.txt
+
+# FAIT LES MIGRATIONS
+python manage.py migrate
+
+# CREER UNE MIGRATION
+python manage.py makemigrations
