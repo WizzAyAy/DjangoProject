@@ -3,6 +3,7 @@ import requests
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from lxml import etree
+import re
 
 from paper.models import Paper
 
@@ -46,6 +47,11 @@ def get_paper_from_api(request):
                 xmlstr = etree.tostring(elem, encoding='utf8', method='text')
             xmlstr = str(xmlstr)
             xmlstr = xmlstr.replace('\\n', '')
+            xmlstr = re.sub(
+                r'[\]x[0-9]*',
+                '',
+                xmlstr
+            )
 
             Paper.objects.create(
                 id=paper_id,
