@@ -1,3 +1,13 @@
+### CREER SON ENV ###
+
+ # CREER SON ENV
+ conda create --name myenv
+ 
+ # ACTIVER SON ENV
+ conda activate myenv
+
+### A FAIRE AVANT DE LANCER LE SITE ###
+
 # INSTAL TOUTES LES LIBRAIRIES
 pip install -r requirements.txt
 
