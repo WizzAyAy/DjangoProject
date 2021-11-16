@@ -1,9 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
+
+    <div class="row">
+        {% if added_papers > 0 %}
+        <div class="alert alert-success" role="alert">
+          Vous avez ajouté {{ added_papers }} articles à la base de données concernant : {{ subject }}
+        </div>
+        {% endif %}
+    </div>
+
     <form action="{% url 'paper:view' %}"  method="post">
+    {% csrf_token %}
         <div class="container-fluid">
             <div class="row">
-                {% csrf_token %}
                 <div class="col-10">
                     <select class="form-select" aria-label="Default select example" name="paper" id="paper-select">
                     <option selected>Select a paper</option>
@@ -12,8 +21,8 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-1">
-                    <button type="submit" class="btn btn-primary">Go</button>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary">Sélectionner</button>
                 </div>
             </div>
         </div>

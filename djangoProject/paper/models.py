@@ -4,12 +4,20 @@ from django.db import models
 class Paper(models.Model):
     paper_title = models.CharField(max_length=30)
     paper_year = models.CharField(max_length=30)
+    paper_subject = models.CharField(max_length=30)
+    paper_text = models.TextField()
 
     def get_title(self):
         return self.paper_title
 
     def get_year(self):
         return self.paper_year
+
+    def get_subject(self):
+        return self.paper_subject
+
+    def get_text(self):
+        return self.paper_text
 
     def get_id(self):
         return self.id

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    <form action="{% url 'information:getPaper' %}"  method="post">
+        <div class="container-fluid">
+            {% csrf_token %}
+            <div class="row">
+                <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="aria-subject">Subjet</span>
+                </div>
+                <input
+                        name="subject"
+                        type="text"
+                        class="form-control"
+                        placeholder="Covid-19"
+                        aria-label="Username"
+                        aria-describedby="aria-subject">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb">
+                    <label for="number_papers" class="form-label" id="rangeLabel"></label><br/>
+                    <span class="fst-italic">Attention, le temps de chargement peut s'avérer assez long.</span>
+                    <input
+                            name="number_papers"
+                            id="number_papers"
+                            type="range"
+                            class="form-range"
+                            step="1"
+                            default="1"
+                            onchange="getNombreArticles()">
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb">
+                    <button type="submit" class="btn btn-primary">Go</button>
+                </div>
+            </div>
+     </div>
+    </form>
+
+    <script>
+        function getNombreArticles() {
+            let value = document.getElementById("number_papers").value
+            document.getElementById("rangeLabel").innerHTML = 'Nombre d\'articles ' + value
+        }
+        getNombreArticles()
+    </script>
+
+{% endblock %}
+
+
