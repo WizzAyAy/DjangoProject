@@ -1,9 +1,29 @@
 {% extends "base.html" %}
+
+{% block script %}
+    <script>
+    function hideText() {
+        let text = document.getElementById("text");
+        let textShow = document.getElementById("textShow");
+        if (text.style.display === "none") {
+            text.style.display = "block";
+            textShow.style.display = "none";
+        } else {
+            text.style.display = "none";
+            textShow.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}
+
 {% block content %}
     <ul class="list-group list-group-flush">
         <li class="list-group-item">Title : {{ paper.get_title }}</li>
         <li class="list-group-item">Sujet : {{ paper.get_subject }}</li>
         <li class="list-group-item">Date : {{ paper.get_year }}</li>
-        <li class="list-group-item">text : {{ paper.get_text }}</li>
+        <li class="list-group-item" onclick="hideText()">Text :
+            <span id="textShow">Cliquez pour afficher le texte</span>
+            <span id="text" style="display: none">{{ paper.get_text }}</span>
+        </li>
     </ul>
 {% endblock %}
