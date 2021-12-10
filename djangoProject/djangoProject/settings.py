@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -25,16 +24,19 @@ SECRET_KEY = 'django-insecure-*h@2v^4^b^b7$vcr+c$q8_!m&!8hsbi-f)v21lpg-%gwp_gm!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+<<<<<<< Updated upstream
 ALLOWED_HOSTS = [
     '0.0.0.0',
     '127.0.0.1'
 ]
+=======
+ALLOWED_HOSTS = ['0.0.0.0']
+>>>>>>> Stashed changes
 
 # Application definition
 
 INSTALLED_APPS = [
     'paper.apps.PaperConfig',
-    'information.apps.InformationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
