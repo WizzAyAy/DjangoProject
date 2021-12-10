@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Mon site</title>
-</head>
-<body>
-    <p>Info</p>
-    <a href="{% url 'papers' %}">Blog</a>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+    {% block css%}
+        <link rel="stylesheet" href="{% static 'css/base.css' %}"  />
+    {% endblock %}
+    
+    {% block content %}
+        <h1 style="text-align: center;">Bienvenue sur <i style="color:cornflowerblue;">Covid Searcher</i></h1>
+        <img  id="covidImage" src="{% static 'img/corona.jpg' %}" alt="covid image"/> 
+    {% endblock %}
+
