@@ -43,8 +43,9 @@ def graph(request):
             if information.get_vaccines(name=key) is True:
                 dict_vaccines[key] += 1
 
+
     context = {
-        'numberOfPaper': 12,
+        'numberOfPaper':  len(Paper.objects.all()),
         'molecules': list(dict_molecules.keys()),
         'molecules_values': list(dict_molecules.values()),
         'vaccines': list(dict_vaccines.keys()),
