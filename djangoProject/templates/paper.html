@@ -2,15 +2,15 @@
 
 {% block script %}
     <script>
-    function hideText() {
-        let text = document.getElementById("text");
-        let textShow = document.getElementById("textShow");
-        if (text.style.display === "none") {
-            text.style.display = "block";
-            textShow.style.display = "none";
+    function hide(spanTextId, spanLegendId) {
+        let spanText = document.getElementById(spanTextId);
+        let spanLegend = document.getElementById(spanLegendId);
+        if (spanText.style.display === "none") {
+            spanText.style.display = "block";
+            spanLegend.style.display = "none";
         } else {
-            text.style.display = "none";
-            textShow.style.display = "block";
+            spanText.style.display = "none";
+            spanLegend.style.display = "block";
         }
     }
 </script>
@@ -21,9 +21,13 @@
         <li class="list-group-item">Title : {{ paper.get_title }}</li>
         <li class="list-group-item">Sujet : {{ paper.get_subject }}</li>
         <li class="list-group-item">Date : {{ paper.get_year }}</li>
-        <li class="list-group-item" onclick="hideText()">Text :
+        <li class="list-group-item" onclick="hide('text', 'textShow')">Text :
             <span id="textShow">Cliquez pour afficher le texte</span>
             <span id="text" style="display: none">{{ paper.get_text }}</span>
+        </li>
+        <li class="list-group-item" onclick="hide('words', 'wordsShow')">Mots les plus utilisés :
+            <span id="wordsShow">Cliquez pour afficher les mots les plus utilisés</span>
+            <span id="words" style="display: none">{{ paper.get_most_used_words }}</span>
         </li>
     </ul>
 {% endblock %}

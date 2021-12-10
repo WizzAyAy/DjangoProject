@@ -1,9 +1,14 @@
 import logging
+import math
+import re
+from operator import itemgetter
+
 import requests
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from lxml import etree
-import re
+from nltk import tokenize
+from nltk.corpus import stopwords
 
 from paper.models import Paper
 
@@ -46,19 +51,33 @@ def get_paper_from_api(request):
             for elem in list(tree.iter('body')):
                 xmlstr = etree.tostring(elem, encoding='utf8', method='text')
             xmlstr = str(xmlstr)
+            xmlstr = " ".join(xmlstr.split())
             xmlstr = xmlstr.replace('\\n', '')
+            xmlstr = xmlstr.replace('\\', '')
+            xmlstr = xmlstr.replace('(', '')
+            xmlstr = xmlstr.replace(')', '')
             xmlstr = re.sub(
                 r'[\]x[0-9]*',
                 '',
                 xmlstr
             )
 
+            most_used_words = get_most_used_word(xmlstr)
+            most_used_words_string = ""
+
+            for index, most_used_word in enumerate(most_used_words):
+                if index == 0:
+                    most_used_words_string += most_used_word
+                else:
+                    most_used_words_string += ", " + most_used_word
+
             Paper.objects.create(
                 id=paper_id,
                 paper_title=response_meta['result'][paper_id]['title'],
                 paper_subject=subject,
                 paper_year=response_meta['result'][paper_id]['pubdate'],
-                paper_text=xmlstr
+                paper_text=xmlstr,
+                paper_most_used_words=most_used_words_string
             )
 
     paper_list = Paper.objects.all()
@@ -70,3 +89,50 @@ def get_paper_from_api(request):
     }
 
     return render(request, '../templates/paperList.html', context)
+
+
+def check_sent(word, sentences):
+    final = [all([w in x for w in word]) for x in sentences]
+    sent_len = [sentences[i] for i in range(0, len(final)) if final[i]]
+    return int(len(sent_len))
+
+
+def get_top_n(dict_elem, n):
+    result = dict(sorted(dict_elem.items(), key=itemgetter(1), reverse=True)[:n])
+    return result
+
+
+def get_most_used_word(text):
+    stop_words = set(stopwords.words('english'))
+    total_words = text.split()
+    total_word_length = len(total_words)
+
+    total_sentences = tokenize.sent_tokenize(text)
+    total_sent_len = len(total_sentences)
+
+    tf_score = {}
+    for each_word in total_words:
+        each_word = each_word.replace('.', '')
+        if each_word not in stop_words:
+            if each_word in tf_score:
+                tf_score[each_word] += 1
+            else:
+                tf_score[each_word] = 1
+
+    tf_score.update((x, y / int(total_word_length)) for x, y in tf_score.items())
+
+    idf_score = {}
+    for each_word in total_words:
+        each_word = each_word.replace('.', '')
+        if each_word not in stop_words:
+            if each_word in idf_score:
+                idf_score[each_word] = check_sent(each_word, total_sentences)
+            else:
+                idf_score[each_word] = 1
+
+    idf_score.update((x, math.log(int(total_sent_len) / y)) for x, y in idf_score.items())
+    tf_idf_score = {key: tf_score[key] * idf_score.get(key, 0) for key in tf_score.keys()}
+
+    key_word = get_top_n(tf_idf_score, 10)
+    keys = key_word.keys()
+    return keys

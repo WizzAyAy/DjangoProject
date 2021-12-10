@@ -6,6 +6,7 @@ class Paper(models.Model):
     paper_year = models.CharField(max_length=30)
     paper_subject = models.CharField(max_length=30)
     paper_text = models.TextField()
+    paper_most_used_words = models.TextField()
 
     def get_title(self):
         return self.paper_title
@@ -18,6 +19,9 @@ class Paper(models.Model):
 
     def get_text(self):
         return self.paper_text
+
+    def get_most_used_words(self):
+        return self.paper_most_used_words
 
     def get_id(self):
         return self.id
