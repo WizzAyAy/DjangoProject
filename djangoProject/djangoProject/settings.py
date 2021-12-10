@@ -24,12 +24,13 @@ SECRET_KEY = 'django-insecure-*h@2v^4^b^b7$vcr+c$q8_!m&!8hsbi-f)v21lpg-%gwp_gm!$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1']
 
 # Application definition
 
 INSTALLED_APPS = [
     'paper.apps.PaperConfig',
+    'information.apps.InformationConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
