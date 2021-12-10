@@ -5,8 +5,7 @@ from . import views
 app_name = 'paper'
 
 urlpatterns = [
-    # view one paper
-    path('view/', views.view, name='view'),
-    # list all paper
-    path('list/', views.index, name='index'),
+    path('view/', views.view, name='view'),  # view one paper
+    path('list/', views.index, name='index'),  # list all paper
+    path('graph/', views.graph, name='graph'),  # graph on all paper
 ]
