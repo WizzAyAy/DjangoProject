@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 class Information(models.Model):
@@ -18,7 +19,6 @@ class Information(models.Model):
     info_moderna = models.BooleanField()
     info_astrazeneca = models.BooleanField()
 
-
     def get_id(self):
         return self.id
 
@@ -32,15 +32,40 @@ class Information(models.Model):
     def get_patient(self):
         return self.info_patient
 
-    def get_molecule(self):
-        return self.info_molecule
+    def get_molecule(self, name=None):
+        if name is None:
+            return self.info_molecule
+        if name == "ronapreve":
+            return self.info_ronapreve
+        if name == "molnupiravir":
+            return self.info_molnupiravir
+        if name == "remdesivir":
+            return self.info_remdesivir
+        if name == "hydroxychloroquine":
+            return self.info_hydroxychloroquine
+        if name == "colchicine":
+            return self.info_colchicine
+        if name == "azithromycine":
+            return self.info_azithromycine
+        if name == "avigan":
+            return self.info_avigan
+        if name == "anakinra":
+            return self.info_anakinra
+
+    def get_vaccines(self, name):
+        if name == "pfizer":
+            return self.info_pfizer
+        if name == "moderna":
+            return self.info_moderna
+        if name == "astrazeneca":
+            return self.info_astrazeneca
 
     def get_ronapreve(self):
         return self.info_ronapreve
 
     def get_molnupiravir(self):
         return self.info_molnupiravir
-    
+
     def get_remdesivir(self):
         return self.info_remdesivir
 
