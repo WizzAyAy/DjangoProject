@@ -39,69 +39,70 @@ def get_paper_from_api(request):
         if paper is None:
 
             added_papers = added_papers + 1
+            try:
+                # url pour recup les métas données
+                response_meta = requests.get(
+                    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=' + str(
+                        paper_id) + '&retmode=json').json()
 
-            # url pour recup les métas données
-            response_meta = requests.get('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=' + str(
-                paper_id) + '&retmode=json').json()
+                # url pour recup le text
+                response_text = requests.get(
+                    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' + str(paper_id))
+                tree = etree.fromstring(response_text.text)
+                xmlstr = ""
+                for elem in list(tree.iter('body')):
+                    xmlstr = etree.tostring(elem, encoding='utf8', method='text')
+                xmlstr = str(xmlstr)
+                xmlstr = " ".join(xmlstr.split())
+                xmlstr = xmlstr.replace('\\n', '\n\r')
+                xmlstr = xmlstr.replace('\\', '')
+                xmlstr = xmlstr.replace('b"', '')
+                xmlstr = xmlstr.replace('b\'', '')
+                xmlstr = re.sub(
+                    r'[\]x[0-9]*',
+                    '',
+                    xmlstr
+                )
+                most_used_words = get_most_used_word(xmlstr)
+                most_used_words_string = ""
 
-            # url pour recup le text
-            response_text = requests.get(
-                'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' + str(paper_id))
-            tree = etree.fromstring(response_text.text)
-            xmlstr = ""
-            for elem in list(tree.iter('body')):
-                xmlstr = etree.tostring(elem, encoding='utf8', method='text')
-            xmlstr = str(xmlstr)
-            xmlstr = " ".join(xmlstr.split())
-            xmlstr = xmlstr.replace('\\n', '\n\r')
-            xmlstr = xmlstr.replace('\\', '')
-            xmlstr = xmlstr.replace('b"', '')
-            xmlstr = xmlstr.replace('b\'', '')
-            xmlstr = re.sub(
-                r'[\]x[0-9]*',
-                '',
-                xmlstr
-            )
-            most_used_words = get_most_used_word(xmlstr)
-            most_used_words_string = ""
+                for index, most_used_word in enumerate(most_used_words):
+                    if index == 0:
+                        most_used_words_string += most_used_word
+                    else:
+                        most_used_words_string += ", " + most_used_word
 
-            for index, most_used_word in enumerate(most_used_words):
-                if index == 0:
-                    most_used_words_string += most_used_word
-                else:
-                    most_used_words_string += ", " + most_used_word
-            
-            getMolecules(xmlstr)
+                getMolecules(xmlstr)
 
-            Paper.objects.create(
-                id=paper_id,
-                paper_title=response_meta['result'][paper_id]['title'],
-                paper_subject=subject,
-                paper_year=response_meta['result'][paper_id]['pubdate'],
-                paper_text=xmlstr,
-                paper_most_used_words=most_used_words_string,
-            )
+                Paper.objects.create(
+                    id=paper_id,
+                    paper_title=response_meta['result'][paper_id]['title'],
+                    paper_subject=subject,
+                    paper_year=response_meta['result'][paper_id]['pubdate'],
+                    paper_text=xmlstr,
+                    paper_most_used_words=most_used_words_string,
+                )
 
-            text = xmlstr.lower()
+                text = xmlstr.lower()
 
-            Information.objects.create(
-                paper_id = paper_id,
-                info_patient = checkword(text, "patients"),
-                info_molecule = checkword(text, "molecule"),
-                info_ronapreve = checkword(text, "ronapreve"),
-                info_molnupiravir = checkword(text, "molnupiravir"),
-                info_remdesivir = checkword(text, "remdesivir"),
-                info_hydroxychloroquine = checkword(text, "hydroxychloroquine"),
-                info_colchicine = checkword(text, "colchicine"),
-                info_azithromycine = checkword(text, "azithromycine"),
-                info_avigan = checkword(text, "avigan"),
-                info_anakinra = checkword(text, "anakinra"),
-                info_pfizer = checkword(text, "pfizer"),
-                info_moderna = checkword(text, "moderna"),
-                info_astrazeneca = checkword(text, "astrazeneca")
-            )
-    
-    
+                Information.objects.create(
+                    paper_id=paper_id,
+                    info_patient=checkword(text, "patients"),
+                    info_molecule=checkword(text, "molecule"),
+                    info_ronapreve=checkword(text, "ronapreve"),
+                    info_molnupiravir=checkword(text, "molnupiravir"),
+                    info_remdesivir=checkword(text, "remdesivir"),
+                    info_hydroxychloroquine=checkword(text, "hydroxychloroquine"),
+                    info_colchicine=checkword(text, "colchicine"),
+                    info_azithromycine=checkword(text, "azithromycine"),
+                    info_avigan=checkword(text, "avigan"),
+                    info_anakinra=checkword(text, "anakinra"),
+                    info_pfizer=checkword(text, "pfizer"),
+                    info_moderna=checkword(text, "moderna"),
+                    info_astrazeneca=checkword(text, "astrazeneca")
+                )
+            except:
+                logger.error("bug")
 
     paper_list = Paper.objects.all()
 
@@ -164,13 +165,12 @@ def get_most_used_word(text):
     return keys
 
 
-
-
 def checkword(text, word):
-    if(word in text):
+    if (word in text):
         return True
     else:
         return False
+
 
 def getMolecules(text):
     pass
