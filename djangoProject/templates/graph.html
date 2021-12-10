@@ -9,15 +9,36 @@
     <div id="vaccines" style="width:100%; height:400px;"></div>
 
     <script>
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
         document.addEventListener('DOMContentLoaded', function () {
             console.log({{ molecules|safe }})
             console.log({{ molecules_values|safe }})
 
             console.log({{ vaccines|safe }})
             console.log({{ vaccines_values|safe }})
+
+            Highcharts.setOptions({
+                colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+            });
+            
             const chartMolecules = Highcharts.chart('molecules', {
                 chart: {
                     type: 'bar'
+                },
+                colors: ['#058DC7', '#50B432', '#ED561B', 
+                '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+                ,
+                plotOptions: {
+                    series: {
+                        colorByPoint: true
+                    }
                 },
                 title: {
                     text: 'most used molecule'
@@ -27,18 +48,26 @@
                 },
                 yAxis: {
                     title: {
-                        text: 'molucules statistic'
+                        text: 'molecules statistic'
                     }
                 },
                 series: [{
                     name: "numbers of uses",
-                    data: {{ molecules_values|safe }}
-                }]
+                    data: {{ molecules_values|safe }},
+                }],
             });
 
             const chartVaccines = Highcharts.chart('vaccines', {
                 chart: {
                     type: 'bar'
+                },
+                colors: ['#058DC7', '#50B432', '#ED561B', 
+                '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+                ,
+                plotOptions: {
+                    series: {
+                        colorByPoint: true
+                    }
                 },
                 title: {
                     text: 'most used vaccines'
@@ -53,9 +82,11 @@
                 },
                 series: [{
                     name: "numbers of uses",
-                    data: {{ vaccines_values|safe }}
-                }]
+                    data: {{ vaccines_values|safe }},
+                }],
             });
         });
+
+
     </script>
 {% endblock %}
