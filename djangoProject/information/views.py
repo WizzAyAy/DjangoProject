@@ -136,3 +136,12 @@ def get_most_used_word(text):
     key_word = get_top_n(tf_idf_score, 10)
     keys = key_word.keys()
     return keys
+
+
+
+#
+def checkwords(text, word):
+    if(word in text):
+        return True
+    else:
+        return False
