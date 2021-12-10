@@ -53,16 +53,15 @@ def get_paper_from_api(request):
                 xmlstr = etree.tostring(elem, encoding='utf8', method='text')
             xmlstr = str(xmlstr)
             xmlstr = " ".join(xmlstr.split())
-            xmlstr = xmlstr.replace('\\n', '')
+            xmlstr = xmlstr.replace('\\n', '\n\r')
             xmlstr = xmlstr.replace('\\', '')
-            xmlstr = xmlstr.replace('(', '')
-            xmlstr = xmlstr.replace(')', '')
+            xmlstr = xmlstr.replace('b"', '')
+            xmlstr = xmlstr.replace('b\'', '')
             xmlstr = re.sub(
                 r'[\]x[0-9]*',
                 '',
                 xmlstr
             )
-
             most_used_words = get_most_used_word(xmlstr)
             most_used_words_string = ""
 

@@ -23,7 +23,7 @@
         <li class="list-group-item">Date : {{ paper.get_year }}</li>
         <li class="list-group-item" onclick="hide('text', 'textShow')">Text :
             <span id="textShow">Cliquez pour afficher le texte</span>
-            <span id="text" style="display: none">{{ paper.get_text }}</span>
+            <span id="text" style="display: none"><pre>{{ paper.get_text }}</pre></span>
         </li>
         <li class="list-group-item" onclick="hide('words', 'wordsShow')">Mots les plus utilisés :
             <span id="wordsShow">Cliquez pour afficher les mots les plus utilisés</span>
