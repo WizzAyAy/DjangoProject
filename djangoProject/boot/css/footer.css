@@ -5,3 +5,7 @@ footer {
     width: 100%;
     bottom: 0px;
 }
+
+body {
+    margin-bottom: 150px;
+}

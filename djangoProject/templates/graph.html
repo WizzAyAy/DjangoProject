@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block script %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+{% endblock %}
+{% block content %}
+
+    <h3>Nombre total de papiers : {{ numberOfPaper }}</h3>
+    <div id="molecules" style="width:100%; height:400px;"></div>
+    <div id="vaccines" style="width:100%; height:400px;"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log({{ molecules|safe }})
+            console.log({{ molecules_values|safe }})
+
+            console.log({{ vaccines|safe }})
+            console.log({{ vaccines_values|safe }})
+            const chartMolecules = Highcharts.chart('molecules', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'most used molecule'
+                },
+                xAxis: {
+                    categories: {{ molecules|safe }}
+                },
+                yAxis: {
+                    title: {
+                        text: 'molucules statistic'
+                    }
+                },
+                series: [{
+                    name: "numbers of uses",
+                    data: {{ molecules_values|safe }}
+                }]
+            });
+
+            const chartVaccines = Highcharts.chart('vaccines', {
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'most used vaccines'
+                },
+                xAxis: {
+                    categories: {{ vaccines|safe }}
+                },
+                yAxis: {
+                    title: {
+                        text: 'molucules statistic'
+                    }
+                },
+                series: [{
+                    name: "numbers of uses",
+                    data: {{ vaccines_values|safe }}
+                }]
+            });
+        });
+    </script>
+{% endblock %}
