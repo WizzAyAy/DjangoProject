@@ -17,20 +17,6 @@ def view(request):
     context = {'paper': paper}
     return render(request, '../templates/paper.html', context)
 
-    # info_patient = models.BooleanField()
-    # info_molecule = models.BooleanField()
-    # info_ronapreve = models.BooleanField()
-    # info_molnupiravir = models.BooleanField()
-    # info_remdesivir = models.BooleanField()
-    # info_hydroxychloroquine = models.BooleanField()
-    # info_colchicine = models.BooleanField()
-    # info_azithromycine = models.BooleanField()
-    # info_avigan = models.BooleanField()
-    # info_anakinra = models.BooleanField()
-    # info_pfizer = models.BooleanField()
-    # info_moderna = models.BooleanField()
-    # info_astrazeneca = models.BooleanField()
-
 
 def graph(request):
     informations = Information.objects.all()
@@ -56,7 +42,6 @@ def graph(request):
         for key in dict_vaccines.keys():
             if information.get_vaccines(name=key) is True:
                 dict_vaccines[key] += 1
-
 
     context = {
         'numberOfPaper': 12,
