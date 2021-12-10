@@ -9,6 +9,7 @@ from django.shortcuts import render
 from lxml import etree
 from nltk import tokenize
 from nltk.corpus import stopwords
+from information.models import Information
 
 from paper.models import Paper
 
@@ -52,16 +53,15 @@ def get_paper_from_api(request):
                 xmlstr = etree.tostring(elem, encoding='utf8', method='text')
             xmlstr = str(xmlstr)
             xmlstr = " ".join(xmlstr.split())
-            xmlstr = xmlstr.replace('\\n', '')
+            xmlstr = xmlstr.replace('\\n', '\n\r')
             xmlstr = xmlstr.replace('\\', '')
-            xmlstr = xmlstr.replace('(', '')
-            xmlstr = xmlstr.replace(')', '')
+            xmlstr = xmlstr.replace('b"', '')
+            xmlstr = xmlstr.replace('b\'', '')
             xmlstr = re.sub(
                 r'[\]x[0-9]*',
                 '',
                 xmlstr
             )
-
             most_used_words = get_most_used_word(xmlstr)
             most_used_words_string = ""
 
@@ -70,6 +70,8 @@ def get_paper_from_api(request):
                     most_used_words_string += most_used_word
                 else:
                     most_used_words_string += ", " + most_used_word
+            
+            getMolecules(xmlstr)
 
             Paper.objects.create(
                 id=paper_id,
@@ -77,8 +79,29 @@ def get_paper_from_api(request):
                 paper_subject=subject,
                 paper_year=response_meta['result'][paper_id]['pubdate'],
                 paper_text=xmlstr,
-                paper_most_used_words=most_used_words_string
+                paper_most_used_words=most_used_words_string,
             )
+
+            text = xmlstr.lower()
+
+            Information.objects.create(
+                paper_id = paper_id,
+                info_patient = checkword(text, "patients"),
+                info_molecule = checkword(text, "molecule"),
+                info_ronapreve = checkword(text, "ronapreve"),
+                info_molnupiravir = checkword(text, "molnupiravir"),
+                info_remdesivir = checkword(text, "remdesivir"),
+                info_hydroxychloroquine = checkword(text, "hydroxychloroquine"),
+                info_colchicine = checkword(text, "colchicine"),
+                info_azithromycine = checkword(text, "azithromycine"),
+                info_avigan = checkword(text, "avigan"),
+                info_anakinra = checkword(text, "anakinra"),
+                info_pfizer = checkword(text, "pfizer"),
+                info_moderna = checkword(text, "moderna"),
+                info_astrazeneca = checkword(text, "astrazeneca")
+            )
+    
+    
 
     paper_list = Paper.objects.all()
 
@@ -130,8 +153,11 @@ def get_most_used_word(text):
             else:
                 idf_score[each_word] = 1
 
-    idf_score.update((x, math.log(int(total_sent_len) / y)) for x, y in idf_score.items())
-    tf_idf_score = {key: tf_score[key] * idf_score.get(key, 0) for key in tf_score.keys()}
+    try:
+        idf_score.update((x, math.log(int(total_sent_len) / y)) for x, y in idf_score.items())
+        tf_idf_score = {key: tf_score[key] * idf_score.get(key, 0) for key in tf_score.keys()}
+    except:
+        return []
 
     key_word = get_top_n(tf_idf_score, 10)
     keys = key_word.keys()
@@ -139,9 +165,12 @@ def get_most_used_word(text):
 
 
 
-#
-def checkwords(text, word):
+
+def checkword(text, word):
     if(word in text):
         return True
     else:
         return False
+
+def getMolecules(text):
+    pass

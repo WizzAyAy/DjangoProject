@@ -3,7 +3,7 @@ web:
   environment:
     MYENV: djangoEnv
   volumes:
-    - .:/code
+    - .:/app
 web_migrate:
   extends:
     service: web
@@ -11,6 +11,6 @@ web_migrate:
 web_run:
   extends:
     service: web
-  command: python manage.py runserver 0.0.0.0:8000
+  command: python manage.py runserver 0.0.0.0:8001
   ports:
-    - "8000:8000"
+    - "8001:8001"
