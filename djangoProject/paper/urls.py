@@ -7,5 +7,6 @@ app_name = 'paper'
 urlpatterns = [
     path('view/', views.view, name='view'),  # view one paper
     path('list/', views.index, name='index'),  # list all paper
+    path('list/specific', views.index_specific, name='index_specific'),  # list all paper
     path('graph/', views.graph, name='graph'),  # graph on all paper
 ]

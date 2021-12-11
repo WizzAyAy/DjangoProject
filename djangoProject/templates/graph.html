@@ -4,30 +4,42 @@
 {% endblock %}
 {% block content %}
 
-    <h3 style="margin-left: 25px">Total numbers of paper : {{ numberOfPaper }}</h3>
+    {% if numberOfPaper > 0 %}
+        <h3 class="text-center mb-5 text-decoration-underline">Numbers of papers : {{ numberOfPaper }}</h3>
+    {% endif %}
+
+
+    <select id="selectType" class="form-select" aria-label="Default select example" onchange="changeChartType()">
+        <option value="none" selected>Change chart display type</option>
+        <option value="bar">bar</option>
+        <option value="line">line</option>
+        <option value="spline">spline</option>
+        <option value="area">area</option>
+        <option value="areaspline">areaspline</option>
+        <option value="column">column</option>
+        <option value="pie">pie</option>
+        <option value="scatter">scatter</option>
+    </select>
+
     <div id="molecules" style="width:100%; height:400px;"></div>
     <div id="vaccines" style="width:100%; height:400px;"></div>
 
     <script>
-        function getRandomColor() {
-            var letters = '0123456789ABCDEF'.split('');
-            var color = '#';
-            for (var i = 0; i < 6; i++ ) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
+
+        function changeChartType() {
+            let type = document.getElementById("selectType").value
+            if(type == "none") return
+            chartMolecule(type)
+            chartVaccines(type)
         }
-        document.addEventListener('DOMContentLoaded', function () {
-            Highcharts.setOptions({
-                colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
-            });
-            
+
+        function chartMolecule(type) {
             const chartMolecules = Highcharts.chart('molecules', {
                 chart: {
-                    type: 'bar'
+                    type: type
                 },
-                colors: ['#058DC7', '#50B432', '#ED561B', 
-                '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+                colors: ['#058DC7', '#50B432', '#ED561B',
+                    '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
                 ,
                 plotOptions: {
                     series: {
@@ -50,13 +62,15 @@
                     data: {{ molecules_values|safe }},
                 }],
             });
+        }
 
+        function chartVaccines(type) {
             const chartVaccines = Highcharts.chart('vaccines', {
                 chart: {
-                    type: 'bar'
+                    type: type
                 },
-                colors: ['#058DC7', '#50B432', '#ED561B', 
-                '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
+                colors: ['#058DC7', '#50B432', '#ED561B',
+                    '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4']
                 ,
                 plotOptions: {
                     series: {
@@ -79,6 +93,12 @@
                     data: {{ vaccines_values|safe }},
                 }],
             });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            chartMolecule('bar')
+            chartVaccines('bar')
         });
 
 

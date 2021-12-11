@@ -9,27 +9,57 @@
         {% endif %}
         {% if not_added_papers > 0 %}
             <div class="alert alert-danger" role="alert">
-                {{ not_added_papers }} haven't been added
+                {{ not_added_papers }} papers haven't been added
+            </div>
+        {% endif %}
+        {% if paper_word != "" and paper_word != None and paper_list %}
+            <div class="alert alert-success" role="alert">
+                The list below contains only papers with the word {{ paper_word }} in it
+            </div>
+        {% endif %}
+        {% if not paper_list %}
+            <div class="alert alert-danger" role="alert">
+                their is no paper to show
             </div>
         {% endif %}
     </div>
 
-    <form action="{% url 'paper:view' %}" method="post">
-        {% csrf_token %}
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-10">
-                    <select class="form-select" aria-label="Default select example" name="paper" id="paper-select">
-                        <option selected>Select a paper</option>
-                        {% for paper in paper_list %}
-                            <option value={{ paper.get_id }}>{{ paper.get_title }}</option>
-                        {% endfor %}
-                    </select>
+    <!-- List not empty-->
+    {% if paper_list %}
+        <div class="row">
+            <form action="{% url 'paper:view' %}" method="post">
+                {% csrf_token %}
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-10">
+                            <select class="form-select" aria-label="Default select example" name="paper"
+                                    id="paper-select">
+                                {% for paper in paper_list %}
+                                    <option value={{ paper.get_id }}>{{ paper.get_title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button style="width: 100%" type="submit" class="btn btn-primary">Sélectionner</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-2">
-                    <button type="submit" class="btn btn-primary">Sélectionner</button>
-                </div>
-            </div>
+            </form>
         </div>
-    </form>
+    {% endif %}
+
+    <div class="row m-3">
+        <form action="{% url 'paper:index_specific' %}" method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="submit">Filter papers containing a specific tag
+                    </button>
+                </div>
+                <input name="wordToCompare" type="text" class="form-control" placeholder="" aria-label=""
+                       aria-describedby="basic-addon1">
+            </div>
+        </form>
+    </div>
+
 {% endblock %}

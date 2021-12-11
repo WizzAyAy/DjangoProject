@@ -12,6 +12,18 @@ def index(request):
     return render(request, '../templates/paperList.html', context)
 
 
+def index_specific(request):
+    word = request.POST.get('wordToCompare')
+    paper_list = Paper.objects.all()
+    paper_list_to_send = []
+    for paper in paper_list:
+        if word in str(paper.get_most_used_words()):
+            paper_list_to_send.append(paper)
+
+    context = {'paper_list': paper_list_to_send, 'paper_word': word}
+    return render(request, '../templates/paperList.html', context)
+
+
 def view(request):
     paper = get_object_or_404(Paper, pk=request.POST.get('paper'))
     context = {'paper': paper}
@@ -43,9 +55,8 @@ def graph(request):
             if information.get_vaccines(name=key) is True:
                 dict_vaccines[key] += 1
 
-
     context = {
-        'numberOfPaper':  len(Paper.objects.all()),
+        'numberOfPaper': len(Paper.objects.all()),
         'molecules': list(dict_molecules.keys()),
         'molecules_values': list(dict_molecules.values()),
         'vaccines': list(dict_vaccines.keys()),
