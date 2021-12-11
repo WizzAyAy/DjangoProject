@@ -23,7 +23,7 @@
         <li class="list-group-item">Date : {{ paper.get_year }}</li>
         <li class="list-group-item" onclick="hide('text', 'textShow')">Text :
             <span id="textShow">Cliquez pour afficher le texte</span>
-            <span id="text" style="display: none"><pre>{{ paper.get_text }}</pre></span>
+            <span id="text" style="display: none">{{ paper.get_text }}</span>
             <form action="{% url 'paper:view' %}" method="post">
                 {% csrf_token %}
                 <input id="wordToCompare" value="" type="hidden"></input>
@@ -35,14 +35,21 @@
         </li>
 
         <script>
+
+
             let get_most_used_words = "{{ paper.get_most_used_words }}"
             const words = get_most_used_words.replace(/ /g, '').split(',')
             words.forEach(word => {
                 if (word != "") {
+                    console.log(word)
+                    let strText = document.getElementById("text").innerHTML;
+                    let resText = strText.replaceAll(word, "<span style='color:red'>"+word+"</span>");
+                    document.getElementById("text").innerHTML = resText;
                     let btn = document.createElement("button");
                     btn.setAttribute("type", "button")
                     btn.classList.add("btn")
                     btn.classList.add("btn-light")
+                    btn.style.marginLeft = "10px"
                     btn.innerHTML = word
                     btn.onclick = function (event) {
                         let wordValue = event.target.textContent

@@ -4,6 +4,8 @@ import re
 from operator import itemgetter
 
 import requests
+import concurrent.futures
+from time import sleep
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from lxml import etree
@@ -34,85 +36,104 @@ def get_paper_from_api(request):
     id_list = json['esearchresult']['idlist']
 
     added_papers = 0
+    not_added_papers = 0
     for paper_id in id_list:
-        paper = Paper.safe_get_id(Paper, paper_id)
-        if paper is None:
+        # t = threading.Thread(target=create_paper, args=(paper_id, paper_id))
+        # t.daemon = True
+        # t.start()
+        # sleep(0.5)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(create_paper, paper_id, subject)
+            return_value = future.result()
 
-            added_papers = added_papers + 1
-            try:
-                # url pour recup les métas données
-                response_meta = requests.get(
-                    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=' + str(
-                        paper_id) + '&retmode=json').json()
-
-                # url pour recup le text
-                response_text = requests.get(
-                    'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' + str(paper_id))
-                tree = etree.fromstring(response_text.text)
-                xmlstr = ""
-                for elem in list(tree.iter('body')):
-                    xmlstr = etree.tostring(elem, encoding='utf8', method='text')
-                xmlstr = str(xmlstr)
-                xmlstr = " ".join(xmlstr.split())
-                xmlstr = xmlstr.replace('\\n', '\n\r')
-                xmlstr = xmlstr.replace('\\', '')
-                xmlstr = xmlstr.replace('b"', '')
-                xmlstr = xmlstr.replace('b\'', '')
-                xmlstr = re.sub(
-                    r'[\]x[0-9]*',
-                    '',
-                    xmlstr
-                )
-                most_used_words = get_most_used_word(xmlstr)
-                most_used_words_string = ""
-
-                for index, most_used_word in enumerate(most_used_words):
-                    if index == 0:
-                        most_used_words_string += most_used_word
-                    else:
-                        most_used_words_string += ", " + most_used_word
-
-                getMolecules(xmlstr)
-
-                Paper.objects.create(
-                    id=paper_id,
-                    paper_title=response_meta['result'][paper_id]['title'],
-                    paper_subject=subject,
-                    paper_year=response_meta['result'][paper_id]['pubdate'],
-                    paper_text=xmlstr,
-                    paper_most_used_words=most_used_words_string,
-                )
-
-                text = xmlstr.lower()
-
-                Information.objects.create(
-                    paper_id=paper_id,
-                    info_patient=checkword(text, "patients"),
-                    info_molecule=checkword(text, "molecule"),
-                    info_ronapreve=checkword(text, "ronapreve"),
-                    info_molnupiravir=checkword(text, "molnupiravir"),
-                    info_remdesivir=checkword(text, "remdesivir"),
-                    info_hydroxychloroquine=checkword(text, "hydroxychloroquine"),
-                    info_colchicine=checkword(text, "colchicine"),
-                    info_azithromycine=checkword(text, "azithromycine"),
-                    info_avigan=checkword(text, "avigan"),
-                    info_anakinra=checkword(text, "anakinra"),
-                    info_pfizer=checkword(text, "pfizer"),
-                    info_moderna=checkword(text, "moderna"),
-                    info_astrazeneca=checkword(text, "astrazeneca")
-                )
-            except:
-                logger.error("bug")
+            if return_value:
+                sleep(0.3)
+                added_papers += 1
+            else:
+                not_added_papers += 1
 
     paper_list = Paper.objects.all()
 
     context = {
         'paper_list': paper_list,
         'added_papers': added_papers,
+        'not_added_papers': not_added_papers,
         'subject': subject
     }
 
     return render(request, '../templates/paperList.html', context)
+
+
+def create_paper(paper_id, subject):
+    paper = Paper.safe_get_id(Paper, paper_id)
+    if paper is not None:
+        return False
+    try:
+        # url pour recup les métas données
+        response_meta = requests.get(
+            'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pmc&id=' + str(
+                paper_id) + '&retmode=json').json()
+
+        # url pour recup le text
+        response_text = requests.get(
+            'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id=' + str(paper_id))
+        tree = etree.fromstring(response_text.text)
+        xmlstr = ""
+        for elem in list(tree.iter('body')):
+            xmlstr = etree.tostring(elem, encoding='utf8', method='text')
+        xmlstr = str(xmlstr)
+        xmlstr = " ".join(xmlstr.split())
+        xmlstr = xmlstr.replace('\\n', '')
+        xmlstr = xmlstr.replace('\\', '')
+        xmlstr = xmlstr.replace('b"', '')
+        xmlstr = xmlstr.replace('b\'', '')
+        xmlstr = re.sub(
+            r'[\]x[0-9]*',
+            '',
+            xmlstr
+        )
+        most_used_words = get_most_used_word(xmlstr)
+        most_used_words_string = ""
+
+        for index, most_used_word in enumerate(most_used_words):
+            if index == 0:
+                most_used_words_string += most_used_word
+            else:
+                most_used_words_string += ", " + most_used_word
+
+        getMolecules(xmlstr)
+
+        Paper.objects.create(
+            id=paper_id,
+            paper_title=response_meta['result'][paper_id]['title'],
+            paper_subject=subject,
+            paper_year=response_meta['result'][paper_id]['pubdate'],
+            paper_text=xmlstr,
+            paper_most_used_words=most_used_words_string,
+        )
+
+        text = xmlstr.lower()
+
+        Information.objects.create(
+            paper_id=paper_id,
+            info_patient=checkword(text, "patients"),
+            info_molecule=checkword(text, "molecule"),
+            info_ronapreve=checkword(text, "ronapreve"),
+            info_molnupiravir=checkword(text, "molnupiravir"),
+            info_remdesivir=checkword(text, "remdesivir"),
+            info_hydroxychloroquine=checkword(text, "hydroxychloroquine"),
+            info_colchicine=checkword(text, "colchicine"),
+            info_azithromycine=checkword(text, "azithromycine"),
+            info_avigan=checkword(text, "avigan"),
+            info_anakinra=checkword(text, "anakinra"),
+            info_pfizer=checkword(text, "pfizer"),
+            info_moderna=checkword(text, "moderna"),
+            info_astrazeneca=checkword(text, "astrazeneca")
+        )
+        return True
+    except Exception as e:
+        logger.error(e)
+        return False
 
 
 def check_sent(word, sentences):
@@ -127,6 +148,7 @@ def get_top_n(dict_elem, n):
 
 
 def get_most_used_word(text):
+    text = re.sub(r'[^\w]', ' ', text)
     stop_words = set(stopwords.words('english'))
     total_words = text.split()
     total_word_length = len(total_words)

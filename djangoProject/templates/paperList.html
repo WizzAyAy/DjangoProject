@@ -3,19 +3,24 @@
 
     <div class="row">
         {% if added_papers > 0 %}
-        <div class="alert alert-success" role="alert">
-          Vous avez ajouté {{ added_papers }} articles à la base de données concernant : {{ subject }}
-        </div>
+            <div class="alert alert-success" role="alert">
+                You add {{ added_papers }} papers concerning : {{ subject }}
+            </div>
+        {% endif %}
+        {% if not_added_papers > 0 %}
+            <div class="alert alert-danger" role="alert">
+                {{ not_added_papers }} haven't been added
+            </div>
         {% endif %}
     </div>
 
-    <form action="{% url 'paper:view' %}"  method="post">
-    {% csrf_token %}
+    <form action="{% url 'paper:view' %}" method="post">
+        {% csrf_token %}
         <div class="container-fluid">
             <div class="row">
                 <div class="col-10">
                     <select class="form-select" aria-label="Default select example" name="paper" id="paper-select">
-                    <option selected>Select a paper</option>
+                        <option selected>Select a paper</option>
                         {% for paper in paper_list %}
                             <option value={{ paper.get_id }}>{{ paper.get_title }}</option>
                         {% endfor %}
