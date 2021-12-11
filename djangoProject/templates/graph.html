@@ -9,17 +9,20 @@
     {% endif %}
 
 
-    <select id="selectType" class="form-select" aria-label="Default select example" onchange="changeChartType()">
-        <option value="none" selected>Change chart display type</option>
-        <option value="bar">bar</option>
-        <option value="line">line</option>
-        <option value="spline">spline</option>
-        <option value="area">area</option>
-        <option value="areaspline">areaspline</option>
-        <option value="column">column</option>
-        <option value="pie">pie</option>
-        <option value="scatter">scatter</option>
-    </select>
+    <div class="container-fluid row justify-content-center">
+        <select style="width: 50%" id="selectType" class="form-select mb-4" aria-label="Default select example"
+                onchange="changeChartType()">
+            <option value="none" selected>Change chart display type</option>
+            <option value="bar">bar</option>
+            <option value="line">line</option>
+            <option value="spline">spline</option>
+            <option value="area">area</option>
+            <option value="areaspline">areaspline</option>
+            <option value="column">column</option>
+            <option value="pie">pie</option>
+            <option value="scatter">scatter</option>
+        </select>
+    </div>
 
     <div id="molecules" style="width:100%; height:400px;"></div>
     <div id="vaccines" style="width:100%; height:400px;"></div>
@@ -28,7 +31,7 @@
 
         function changeChartType() {
             let type = document.getElementById("selectType").value
-            if(type == "none") return
+            if (type == "none") return
             chartMolecule(type)
             chartVaccines(type)
         }
