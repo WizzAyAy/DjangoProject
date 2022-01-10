@@ -11,6 +11,6 @@ web_migrate:
 web_run:
   extends:
     service: web
-  command: python manage.py runserver 0.0.0.0:80
+  command: python manage.py runserver 0.0.0.0:8090
   ports:
-    - "80:80"
+    - "8090:8090"
