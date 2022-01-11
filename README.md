@@ -1,20 +1,5 @@
-# CREER SON ENV #
+# Bienvenue sur Covid Tracker le site qui vous permet de récuperer des articles de pubmed ! #
 
- ### creer son env ###
- conda create --name myenv
- 
- ### activer son env ###
- conda activate myenv
+Pour lancer le site il vous suffit de lancer dans le dossier djangoProject la commande
 
-# A FAIRE AVANT DE LANCER LE SITE #
-
-### install toutes les librairies ###
-pip install -r requirements.txt
-
-### fait les migrations ###
-python manage.py migrate
-
-
-
-# CREER LES MIGRATIONS #
-python manage.py makemigrations
+* docker-compose up -d 
